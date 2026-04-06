@@ -53,8 +53,30 @@
             display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 10; /* Agar bayangan terlihat di atas sidebar */
         }
+        
+        .header-left {
+            display: flex; align-items: center; gap: 15px;
+        }
+        
         .header h2 { margin: 0; font-size: 18px; }
         
+        /* Tombol Toggle Sidebar */
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
         .user-info { display: flex; align-items: center; gap: 15px; }
         .active-email { font-size: 14px; opacity: 0.9; }
 
@@ -81,6 +103,16 @@
             flex-direction: column;
             padding-top: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+            /* Transisi untuk efek minimize/maximize */
+            transition: width 0.3s ease;
+            overflow: hidden; 
+            white-space: nowrap; 
+        }
+
+        /* Kelas saat sidebar di-minimize */
+        .sidebar.collapsed {
+            width: 0;
+            border-right: none;
         }
 
         .sidebar-title {
@@ -150,7 +182,10 @@
 
     <div id="dashboard-section">
         <div class="header">
-            <h2>Portal Internal Bentala</h2>
+            <div class="header-left">
+                <button class="toggle-btn" onclick="toggleSidebar()" title="Sembunyikan/Tampilkan Menu">☰</button>
+                <h2>Portal Internal Bentala</h2>
+            </div>
             <div class="user-info">
                 <span class="active-email" id="display-email"></span>
                 <button class="logout-btn" onclick="keluarDashboard()">Keluar</button>
@@ -159,98 +194,7 @@
 
         <div class="dashboard-content">
             
-            <div class="sidebar">
+            <div class="sidebar" id="sidebarMenu">
                 <div class="sidebar-title">Menu Utama</div>
                 
-                <a href="#" class="menu-item active" onclick="gantiHalaman('https://lookerstudio.google.com/embed/reporting/d38ab795-dfb1-462a-96f5-b3c28109d509/page/89fmF', this)">
-                    Ringkasan Utama
-                </a>
-                
-                <a href="#" class="menu-item" onclick="gantiHalaman('https://lookerstudio.google.com/embed/reporting/d38ab795-dfb1-462a-96f5-b3c28109d509/page/p_cznwle770d', this)">
-                    Detail Kinerja
-                </a>
-                
-                <a href="#" class="menu-item" onclick="gantiHalaman('https://lookerstudio.google.com/embed/reporting/d38ab795-dfb1-462a-96f5-b3c28109d509/page/p_rfpjtc3g0d', this)">
-                    Peta Persebaran Kasus
-                </a>
-            </div>
-
-            <div class="iframe-container">
-                <iframe id="looker-frame" src="https://lookerstudio.google.com/embed/reporting/d38ab795-dfb1-462a-96f5-b3c28109d509/page/89fmF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // DAFTAR EMAIL YANG DIIZINKAN (WHITELIST)
-        const emailDiizinkan = [
-            "mochammad.arief.fatchur.rochman@gmail.com",
-            "mochammadarief21@gmail.com",
-            "admin@bentala.com",
-            "contoh@gmail.com"
-        ];
-
-        function verifikasiAkses(event) {
-            event.preventDefault(); 
-            
-            const inputEmail = document.getElementById("email").value.toLowerCase();
-            const errorMessage = document.getElementById("error-message");
-
-            // Cek apakah email yang dimasukkan ada di dalam daftar whitelist
-            if (emailDiizinkan.includes(inputEmail)) {
-                
-                // JIKA BERHASIL
-                errorMessage.style.display = "none";
-                document.getElementById("display-email").innerText = inputEmail;
-
-                // Transisi ke dashboard
-                document.getElementById("login-section").style.opacity = "0";
-                setTimeout(function() {
-                    document.getElementById("login-section").style.display = "none";
-                    document.getElementById("dashboard-section").style.display = "flex";
-                }, 300);
-
-            } else {
-                // JIKA GAGAL
-                errorMessage.style.display = "block";
-                document.getElementById("password").value = "";
-            }
-        }
-
-        function keluarDashboard() {
-            document.getElementById("dashboard-section").style.display = "none";
-            
-            var loginSection = document.getElementById("login-section");
-            loginSection.style.display = "flex";
-            
-            // Sembunyikan pesan error saat keluar
-            document.getElementById("error-message").style.display = "none";
-            
-            setTimeout(function() {
-                loginSection.style.opacity = "1";
-                document.getElementById("loginForm").reset();
-                
-                // Kembalikan ke menu pertama saat logout agar saat login lagi tetap fresh
-                document.querySelectorAll('.menu-item')[0].click();
-            }, 50);
-        }
-
-        // FUNGSI BARU: Mengganti halaman iframe dari sidebar
-        function gantiHalaman(urlLaporan, elemenMenu) {
-            // 1. Ubah sumber (src) dari iframe
-            document.getElementById('looker-frame').src = urlLaporan;
-
-            // 2. Hapus class 'active' dari semua menu
-            let semuaMenu = document.querySelectorAll('.menu-item');
-            semuaMenu.forEach(function(menu) {
-                menu.classList.remove('active');
-            });
-
-            // 3. Tambahkan class 'active' ke menu yang sedang diklik
-            elemenMenu.classList.add('active');
-        }
-    </script>
-
-</body>
-</html>
+                <a href="#" class="menu-item active" onclick="gantiHalaman('
